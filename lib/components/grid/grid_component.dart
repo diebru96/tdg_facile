@@ -9,6 +9,7 @@ import '../towers/base_tower.dart';
 import '../towers/cannon_tower.dart';
 import '../towers/gun_tower.dart';
 import '../towers/laser_tower.dart';
+import '../towers/mine_tower.dart';
 import '../towers/slow_tower.dart';
 import '../towers/sniper_tower.dart';
 import '../towers/trap_tower.dart';
@@ -39,9 +40,9 @@ class GridComponent extends PositionComponent with HasGameReference<HomeDefenseG
     _cells = List.generate(cols, (col) => List.generate(rows, (row) => GridCell(col: col, row: row)));
   }
 
-  /// Called from [HomeDefenseGame.onGameResize] to layout the grid.
-  void resize(Vector2 gameSize) {
-    cellSize = gameSize.x / cols;
+  /// Called from [HomeDefenseGame._applyLayout] with the already-computed cell size.
+  void resize(Vector2 gameSize, double newCellSize) {
+    cellSize = newCellSize;
     size = Vector2(gameSize.x, cellSize * rows);
   }
 
@@ -177,6 +178,7 @@ class GridComponent extends PositionComponent with HasGameReference<HomeDefenseG
       TowerType.slow => SlowTower(),
       TowerType.sniper => SniperTower(),
       TowerType.auto => AutoTower(),
+      TowerType.mine => MineTower(),
     };
   }
 }

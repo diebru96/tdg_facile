@@ -7,6 +7,7 @@ import '../components/enemies/base_enemy.dart';
 import '../components/enemies/fast_thief.dart';
 import '../components/enemies/special_thief.dart';
 import '../components/enemies/tank_thief.dart';
+import '../game/game_state.dart';
 import '../game/home_defense_game.dart';
 import '../models/enemy_type.dart';
 import '../models/level_data.dart';
@@ -29,7 +30,7 @@ class WaveSystem extends Component with HasGameReference<HomeDefenseGame> {
 
   final _rng = Random();
 
-  WaveSystem({required HomeDefenseGame game});
+  WaveSystem();
 
   void reset(LevelData level) {
     _level = level;
@@ -97,7 +98,7 @@ class WaveSystem extends Component with HasGameReference<HomeDefenseGame> {
     super.update(dt);
 
     if (!_levelLoaded) return;
-    if (game.state.index != 1) return; // playing state index = 1
+    if (game.state != GameState.playing) return;
 
     if (_waitingForNextWave) {
       _interWaveTimer -= dt;
@@ -128,7 +129,7 @@ class WaveSystem extends Component with HasGameReference<HomeDefenseGame> {
     final enemy = _buildEnemy(type, col);
 
     // Spawn just above the visible grid
-    final x = game.grid.absolutePosition.x + col * game.grid.cellSize + game.grid.cellSize / 2 - enemy.size.x / 2;
+    final x = game.grid!.absolutePosition.x + col * game.grid!.cellSize + game.grid!.cellSize / 2 - enemy.size.x / 2;
     enemy.position = Vector2(x, -enemy.size.y - 4);
 
     game.add(enemy);

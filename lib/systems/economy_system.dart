@@ -1,34 +1,35 @@
 import 'package:flame/components.dart';
 
+import '../game/game_state.dart';
 import '../game/home_defense_game.dart';
 import '../models/level_data.dart';
 
-/// Generates money at regular intervals and holds the money state.
+/// Generates money at regular intervals based on the current [LevelData].
 ///
-/// Money notifications are forwarded via [HomeDefenseGame.addMoney].
+/// Call [reset] at the start of every level before gameplay begins.
 class EconomySystem extends Component with HasGameReference<HomeDefenseGame> {
   double _timer = 0;
-  late LevelData _level;
+  LevelData? _level;
 
-  EconomySystem({required HomeDefenseGame game});
-
+  /// Prepare this system for a new level. Must be called before [GameState.playing].
   void reset(LevelData level) {
     _level = level;
     _timer = 0;
   }
 
-  void addMoney(int amount) => game.addMoney(amount);
-
   @override
   void update(double dt) {
     super.update(dt);
 
-    if (game.state.index != 1) return; // only tick while playing
+    // Only tick during active gameplay.
+    if (game.state != GameState.playing) return;
+    final level = _level;
+    if (level == null) return;
 
     _timer += dt;
-    if (_timer >= _level.moneyInterval) {
-      _timer -= _level.moneyInterval;
-      game.addMoney(_level.moneyAmount);
+    if (_timer >= level.moneyInterval) {
+      _timer -= level.moneyInterval;
+      game.addMoney(level.moneyAmount);
     }
   }
 }

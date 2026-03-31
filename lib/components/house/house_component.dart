@@ -1,4 +1,3 @@
-
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
 
@@ -21,8 +20,8 @@ class HouseComponent extends PositionComponent with HasGameReference<HomeDefense
     priority = 1;
   }
 
-  void resize(Vector2 gameSize, double gridBottom) {
-    size = Vector2(gameSize.x, gameSize.y - gridBottom);
+  void resize(double width, double height) {
+    size = Vector2(width, height);
   }
 
   void reset() {

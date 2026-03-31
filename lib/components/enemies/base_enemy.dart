@@ -65,7 +65,7 @@ abstract class BaseEnemy extends PositionComponent with HasGameReference<HomeDef
 
   void _die() {
     isDead = true;
-    game.economySystem.addMoney(data.reward);
+    game.addMoney(data.reward);
     game.waveSystem.onEnemyDefeated();
     removeFromParent();
   }
@@ -89,7 +89,7 @@ abstract class BaseEnemy extends PositionComponent with HasGameReference<HomeDef
     }
 
     // Check for a tower in the cell directly below
-    final grid = game.grid;
+    final grid = game.grid!;
     final bottomY = position.y + size.y;
     final nextRow = grid.rowForY(bottomY + 2); // +2 px look-ahead
     final blockingTower = grid.getTowerAt(column, nextRow);

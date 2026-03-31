@@ -44,9 +44,9 @@ final List<LevelData> gameLevels = [
   const LevelData(
     level: 1,
     title: 'Notte Tranquilla',
-    startingMoney: 200,
-    moneyInterval: 8.0,
-    moneyAmount: 25,
+    startingMoney: 300,
+    moneyInterval: 4.0, // was 8.0 – generates money twice as fast
+    moneyAmount: 30, // was 25
     waves: [
       WaveData(waveNumber: 1, groups: [WaveEnemy(type: EnemyType.fast, count: 5, spawnInterval: 2.0)], moneyBonus: 50),
       WaveData(
@@ -73,9 +73,9 @@ final List<LevelData> gameLevels = [
   const LevelData(
     level: 2,
     title: 'Allarme nel Quartiere',
-    startingMoney: 150,
-    moneyInterval: 7.0,
-    moneyAmount: 20,
+    startingMoney: 250,
+    moneyInterval: 4.5, // was 7.0
+    moneyAmount: 25, // was 20
     waves: [
       WaveData(
         waveNumber: 1,
@@ -117,9 +117,9 @@ final List<LevelData> gameLevels = [
   const LevelData(
     level: 3,
     title: 'Assedio Totale',
-    startingMoney: 100,
-    moneyInterval: 6.0,
-    moneyAmount: 15,
+    startingMoney: 200,
+    moneyInterval: 5.0, // was 6.0
+    moneyAmount: 20, // was 15
     waves: [
       WaveData(
         waveNumber: 1,

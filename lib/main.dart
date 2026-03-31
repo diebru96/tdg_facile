@@ -42,15 +42,17 @@ class _GamePageState extends State<_GamePage> {
 
   @override
   Widget build(BuildContext context) {
+    Widget overlay(Widget child) => Material(type: MaterialType.transparency, child: child);
+
     return GameWidget<HomeDefenseGame>(
       game: _game,
       overlayBuilderMap: {
-        'mainMenu': (ctx, game) => MainMenuOverlay(game: game),
-        'levelSelect': (ctx, game) => LevelSelectOverlay(game: game),
-        'hud': (ctx, game) => HudOverlay(game: game),
-        'towerPanel': (ctx, game) => TowerPanelOverlay(game: game),
-        'gameOver': (ctx, game) => GameOverOverlay(game: game),
-        'win': (ctx, game) => WinOverlay(game: game),
+        'mainMenu': (ctx, game) => overlay(MainMenuOverlay(game: game)),
+        'levelSelect': (ctx, game) => overlay(LevelSelectOverlay(game: game)),
+        'hud': (ctx, game) => overlay(HudOverlay(game: game)),
+        'towerPanel': (ctx, game) => overlay(TowerPanelOverlay(game: game)),
+        'gameOver': (ctx, game) => overlay(GameOverOverlay(game: game)),
+        'win': (ctx, game) => overlay(WinOverlay(game: game)),
       },
       initialActiveOverlays: const ['mainMenu'],
     );

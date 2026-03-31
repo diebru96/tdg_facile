@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 /// All available defense tower types
-enum TowerType { wall, gun, cannon, laser, trap, slow, sniper, auto }
+enum TowerType { wall, gun, cannon, laser, trap, slow, sniper, auto, mine }
 
 /// Static configuration data for a tower type
 class TowerData {
@@ -138,6 +138,19 @@ const List<TowerData> allTowers = [
     range: 2.5,
     description: 'Fuoco rapido',
     color: Color(0xFF708090),
+  ),
+  // Miniera – passive gold generator
+  TowerData(
+    type: TowerType.mine,
+    name: 'Miniera',
+    icon: '⛏️',
+    cost: 80,
+    maxHp: 80,
+    damage: 0,
+    attackCooldown: 0,
+    range: 0,
+    description: '+20 oro ogni 6s',
+    color: Color(0xFFFFD700),
   ),
 ];
 

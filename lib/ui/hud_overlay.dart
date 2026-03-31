@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../game/game_state.dart';
 import '../game/home_defense_game.dart';
 import '../models/tower_type.dart';
 
@@ -82,15 +83,11 @@ class _HudOverlayState extends State<HudOverlay> {
                 _StatChip(icon: '🌊', label: '${game.currentWave} / ${game.totalWaves}', color: Colors.lightBlueAccent),
                 const SizedBox(width: 8),
                 // Pause button
-                InkWell(
-                  onTap: () =>
-                      game.state.index ==
-                          2 // playing
-                      ? game.pauseGame()
-                      : game.resumeGame(),
+                GestureDetector(
+                  onTap: () => game.state == GameState.playing ? game.pauseGame() : game.resumeGame(),
                   child: Padding(
                     padding: const EdgeInsets.all(4),
-                    child: Text(game.state.index == 2 ? '⏸' : '▶️', style: const TextStyle(fontSize: 20)),
+                    child: Text(game.state == GameState.playing ? '⏸' : '▶️', style: const TextStyle(fontSize: 20)),
                   ),
                 ),
               ],
@@ -173,7 +170,7 @@ class _TowerPanelOverlayState extends State<TowerPanelOverlay> {
                 GestureDetector(
                   onTap: () {
                     game.selectedTowerType = null;
-                    game.grid.clearHighlights();
+                    game.grid?.clearHighlights();
                     game.refresh();
                   },
                   child: const Text('Tap di nuovo per deselezionare', style: TextStyle(color: Colors.white54, fontSize: 11)),
@@ -194,7 +191,7 @@ class _TowerPanelOverlayState extends State<TowerPanelOverlay> {
                           ? () {
                               if (game.selectedTowerType == td.type) {
                                 game.selectedTowerType = null;
-                                game.grid.clearHighlights();
+                                game.grid?.clearHighlights();
                               } else {
                                 game.selectedTowerType = td.type;
                               }

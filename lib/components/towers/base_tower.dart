@@ -1,4 +1,3 @@
-
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
 
@@ -20,8 +19,9 @@ abstract class BaseTower extends PositionComponent with HasGameReference<HomeDef
   late int _hp;
   double _attackTimer = 0;
 
-  // Flash effect when damaged
-  double _damageFlash = 0;
+  // Flash effect when damaged – exposed as protected for subclasses that
+  // override update() (e.g. MineTower).
+  double damageFlash = 0;
 
   int get hp => _hp;
   bool get isDestroyed => _hp <= 0;
@@ -37,20 +37,19 @@ abstract class BaseTower extends PositionComponent with HasGameReference<HomeDef
 
   void takeDamage(int amount) {
     _hp -= amount;
-    _damageFlash = 0.15;
+    damageFlash = 0.15;
     if (_hp <= 0) {
-      game.grid.removeTowerAt(gridCol, gridRow);
+      game.grid!.removeTowerAt(gridCol, gridRow);
     }
   }
 
   // ── Range helper ─────────────────────────────────────────────────────────────
 
   /// Returns the range radius in pixels.
-  double get rangePixels => data.range * game.grid.cellSize;
+  double get rangePixels => data.range * game.grid!.cellSize;
 
   /// Centre of this tower in game (world) coordinates.
-  Vector2 get worldCenter =>
-      game.grid.absolutePosition + Vector2((gridCol + 0.5) * game.grid.cellSize, (gridRow + 0.5) * game.grid.cellSize);
+  Vector2 get worldCenter => game.grid!.absolutePosition + Vector2((gridCol + 0.5) * game.grid!.cellSize, (gridRow + 0.5) * game.grid!.cellSize);
 
   /// Nearest enemy within range, or null.
   BaseEnemy? nearestEnemyInRange() {
@@ -78,7 +77,7 @@ abstract class BaseTower extends PositionComponent with HasGameReference<HomeDef
     super.update(dt);
 
     if (isDestroyed) return;
-    if (_damageFlash > 0) _damageFlash -= dt;
+    if (damageFlash > 0) damageFlash -= dt;
 
     if (data.attackCooldown <= 0) return; // walls don't attack
 
@@ -105,7 +104,7 @@ abstract class BaseTower extends PositionComponent with HasGameReference<HomeDef
 
   void _drawBackground(Canvas canvas) {
     final rect = Rect.fromLTWH(2, 2, size.x - 4, size.y - 4);
-    final color = _damageFlash > 0 ? const Color(0xFFFF4444) : data.color.withAlpha(200);
+    final color = damageFlash > 0 ? const Color(0xFFFF4444) : data.color.withAlpha(200);
     canvas.drawRRect(RRect.fromRectAndRadius(rect, const Radius.circular(6)), Paint()..color = color);
     canvas.drawRRect(
       RRect.fromRectAndRadius(rect, const Radius.circular(6)),

@@ -21,9 +21,13 @@ class HomeDefenseGame extends FlameGame with TapCallbacks, ChangeNotifier {
   static const int gridCols = 8;
   static const int gridRows = 8;
 
+  /// Pixels reserved at the bottom for the tower-selection panel overlay.
+  /// Must stay in sync with the panel's actual rendered height in hud_overlay.dart.
+  static const double kPanelReserve = 104.0;
+
   // ── Core components ─────────────────────────────────────────────────────────
-  late final GridComponent grid;
-  late final HouseComponent house;
+  GridComponent? grid;
+  HouseComponent? house;
 
   // ── Sub-systems ─────────────────────────────────────────────────────────────
   late final EconomySystem economySystem;
@@ -62,7 +66,7 @@ class HomeDefenseGame extends FlameGame with TapCallbacks, ChangeNotifier {
   TowerType? selectedTowerType;
 
   // ── Y-coordinate where house starts in game space ───────────────────────────
-  double get houseY => grid.position.y + grid.size.y;
+  double get houseY => grid == null ? size.y : grid!.position.y + grid!.size.y;
 
   // ── Enemies currently in the scene ──────────────────────────────────────────
   List<BaseEnemy> get activeEnemies => children.whereType<BaseEnemy>().toList();
@@ -76,13 +80,19 @@ class HomeDefenseGame extends FlameGame with TapCallbacks, ChangeNotifier {
   Future<void> onLoad() async {
     super.onLoad();
 
-    grid = GridComponent(cols: gridCols, rows: gridRows);
-    house = HouseComponent();
-    economySystem = EconomySystem(game: this);
-    waveSystem = WaveSystem(game: this);
+    final g = GridComponent(cols: gridCols, rows: gridRows);
+    final h = HouseComponent();
+    economySystem = EconomySystem();
+    waveSystem = WaveSystem();
 
-    await add(grid);
-    await add(house);
+    await add(g);
+    await add(h);
+
+    grid = g;
+    house = h;
+
+    // Apply any resize that arrived before onLoad finished.
+    _applyLayout(size);
     await add(economySystem);
     await add(waveSystem);
 
@@ -93,15 +103,31 @@ class HomeDefenseGame extends FlameGame with TapCallbacks, ChangeNotifier {
   @override
   void onGameResize(Vector2 size) {
     super.onGameResize(size);
+    _applyLayout(size);
+  }
 
-    final cellSize = size.x / gridCols;
+  void _applyLayout(Vector2 size) {
+    // Components may not exist yet when the first resize fires before onLoad.
+    if (grid == null || house == null) return;
+
+    // Reserve space at the bottom for the Flutter tower-panel overlay.
+    final availableH = size.y - kPanelReserve;
+
+    // Cell size: fit the grid (rows) + house (1.5 cells) inside available height,
+    // but never wider than screenWidth / cols.
+    final cellByWidth = size.x / gridCols;
+    final cellByHeight = availableH / (gridRows + 1.5);
+    final cellSize = cellByWidth < cellByHeight ? cellByWidth : cellByHeight;
+
     final gridH = cellSize * gridRows;
 
-    grid.resize(size);
-    grid.position = Vector2.zero();
+    grid!.resize(size, cellSize);
+    grid!.position = Vector2.zero();
 
-    house.resize(size, gridH);
-    house.position = Vector2(0, gridH);
+    // House sits directly below the grid.
+    final houseHeight = cellSize * 1.5;
+    house!.resize(size.x, houseHeight);
+    house!.position = Vector2(0, gridH);
   }
 
   // ── Public API ───────────────────────────────────────────────────────────────
@@ -144,12 +170,12 @@ class HomeDefenseGame extends FlameGame with TapCallbacks, ChangeNotifier {
     selectedTowerType = null;
 
     // Clear previous game objects
-    grid.clearAllTowers();
+    grid!.clearAllTowers();
     for (final e in activeEnemies) {
       e.removeFromParent();
     }
 
-    house.reset();
+    house!.reset();
     economySystem.reset(level);
     waveSystem.reset(level);
 
@@ -183,11 +209,11 @@ class HomeDefenseGame extends FlameGame with TapCallbacks, ChangeNotifier {
     if (selectedTowerType == null) return;
 
     final worldPos = event.canvasPosition;
-    final cell = grid.getCellAt(worldPos);
+    final cell = grid!.getCellAt(worldPos);
     if (cell == null) return;
 
     final (col, row) = cell;
-    if (!grid.canPlaceTower(col, row)) return;
+    if (!grid!.canPlaceTower(col, row)) return;
 
     final data = towerDataFor(selectedTowerType!);
     if (!spendMoney(data.cost)) {
@@ -196,7 +222,7 @@ class HomeDefenseGame extends FlameGame with TapCallbacks, ChangeNotifier {
       return;
     }
 
-    grid.placeTowerOfType(selectedTowerType!, col, row);
+    grid!.placeTowerOfType(selectedTowerType!, col, row);
   }
 
   // ── Private helpers ───────────────────────────────────────────────────────────

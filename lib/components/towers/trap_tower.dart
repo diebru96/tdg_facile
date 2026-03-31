@@ -27,7 +27,7 @@ class TrapTower extends BaseTower {
     }
     // Destroy self after explosion
     Future.delayed(const Duration(milliseconds: 500), () {
-      if (isMounted) game.grid.removeTowerAt(gridCol, gridRow);
+      if (isMounted) game.grid!.removeTowerAt(gridCol, gridRow);
     });
     return true;
   }
