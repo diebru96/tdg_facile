@@ -6,7 +6,7 @@ import '../models/level_data.dart';
 /// Generates money at regular intervals and holds the money state.
 ///
 /// Money notifications are forwarded via [HomeDefenseGame.addMoney].
-class EconomySystem extends Component with HasGameRef<HomeDefenseGame> {
+class EconomySystem extends Component with HasGameReference<HomeDefenseGame> {
   double _timer = 0;
   late LevelData _level;
 
@@ -17,18 +17,18 @@ class EconomySystem extends Component with HasGameRef<HomeDefenseGame> {
     _timer = 0;
   }
 
-  void addMoney(int amount) => gameRef.addMoney(amount);
+  void addMoney(int amount) => game.addMoney(amount);
 
   @override
   void update(double dt) {
     super.update(dt);
 
-    if (gameRef.state.index != 1) return; // only tick while playing
+    if (game.state.index != 1) return; // only tick while playing
 
     _timer += dt;
     if (_timer >= _level.moneyInterval) {
       _timer -= _level.moneyInterval;
-      gameRef.addMoney(_level.moneyAmount);
+      game.addMoney(_level.moneyAmount);
     }
   }
 }

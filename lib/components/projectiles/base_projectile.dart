@@ -6,7 +6,7 @@ import '../../game/home_defense_game.dart';
 import '../enemies/base_enemy.dart';
 
 /// Abstract base for all projectiles fired by towers.
-abstract class BaseProjectile extends PositionComponent with HasGameRef<HomeDefenseGame> {
+abstract class BaseProjectile extends PositionComponent with HasGameReference<HomeDefenseGame> {
   final int damage;
   final double speed;
 
@@ -28,7 +28,7 @@ abstract class BaseProjectile extends PositionComponent with HasGameRef<HomeDefe
     }
 
     // Remove if out of bounds
-    final s = gameRef.size;
+    final s = game.size;
     if (position.x < -50 || position.x > s.x + 50 || position.y < -100 || position.y > s.y + 50) {
       removeFromParent();
     }

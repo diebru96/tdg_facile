@@ -20,14 +20,14 @@ class TrapTower extends BaseTower {
     _triggered = true;
     _explosionTimer = 0.4;
 
-    for (final e in gameRef.activeEnemies) {
+    for (final e in game.activeEnemies) {
       if ((e.worldCenter - worldCenter).length < data.areaRadius) {
         e.takeDamage(data.damage);
       }
     }
     // Destroy self after explosion
     Future.delayed(const Duration(milliseconds: 500), () {
-      if (isMounted) gameRef.grid.removeTowerAt(gridCol, gridRow);
+      if (isMounted) game.grid.removeTowerAt(gridCol, gridRow);
     });
     return true;
   }

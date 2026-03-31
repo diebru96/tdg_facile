@@ -21,13 +21,13 @@ class Cannonball extends BaseProjectile {
   @override
   void onImpact() {
     // Deal damage to all enemies within splashRadius
-    for (final enemy in gameRef.activeEnemies) {
+    for (final enemy in game.activeEnemies) {
       if ((enemy.worldCenter - position).length <= splashRadius) {
         enemy.takeDamage(damage);
       }
     }
     // Visual explosion – add a temporary effect
-    gameRef.add(_ExplosionEffect(position: position.clone(), radius: splashRadius));
+    game.add(_ExplosionEffect(position: position.clone(), radius: splashRadius));
   }
 
   @override

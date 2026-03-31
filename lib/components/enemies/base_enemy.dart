@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
 
@@ -11,7 +9,7 @@ import '../../models/enemy_type.dart';
 /// Enemies are direct children of the root [HomeDefenseGame].
 /// They move in a vertical column at a given X position and deal
 /// damage to the house when they reach [gameRef.houseY].
-abstract class BaseEnemy extends PositionComponent with HasGameRef<HomeDefenseGame> {
+abstract class BaseEnemy extends PositionComponent with HasGameReference<HomeDefenseGame> {
   final EnemyData data;
 
   /// Grid column the enemy is walking through.
@@ -35,7 +33,9 @@ abstract class BaseEnemy extends PositionComponent with HasGameRef<HomeDefenseGa
   // Flash when hit
   double _hitFlash = 0;
 
-  BaseEnemy({required this.data, required this.column}) : _currentSpeed = data.speed, super(size: Vector2(32, 32), priority: 3);
+  BaseEnemy({required this.data, required this.column, Vector2? enemySize})
+    : _currentSpeed = data.speed,
+      super(size: enemySize ?? Vector2(32, 32), priority: 3);
 
   @override
   Future<void> onLoad() async {
@@ -65,8 +65,8 @@ abstract class BaseEnemy extends PositionComponent with HasGameRef<HomeDefenseGa
 
   void _die() {
     isDead = true;
-    gameRef.economySystem.addMoney(data.reward);
-    gameRef.waveSystem.onEnemyDefeated();
+    game.economySystem.addMoney(data.reward);
+    game.waveSystem.onEnemyDefeated();
     removeFromParent();
   }
 
@@ -89,7 +89,7 @@ abstract class BaseEnemy extends PositionComponent with HasGameRef<HomeDefenseGa
     }
 
     // Check for a tower in the cell directly below
-    final grid = gameRef.grid;
+    final grid = game.grid;
     final bottomY = position.y + size.y;
     final nextRow = grid.rowForY(bottomY + 2); // +2 px look-ahead
     final blockingTower = grid.getTowerAt(column, nextRow);
@@ -108,10 +108,10 @@ abstract class BaseEnemy extends PositionComponent with HasGameRef<HomeDefenseGa
     position.y += _currentSpeed * dt;
 
     // Arrived at house?
-    if (position.y + size.y >= gameRef.houseY) {
-      gameRef.damageHouse(data.damage);
+    if (position.y + size.y >= game.houseY) {
+      game.damageHouse(data.damage);
       isDead = true;
-      gameRef.waveSystem.onEnemyDefeated();
+      game.waveSystem.onEnemyDefeated();
       removeFromParent();
     }
   }

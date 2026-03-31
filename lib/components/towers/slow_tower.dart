@@ -11,7 +11,7 @@ class SlowTower extends BaseTower {
     final target = nearestEnemyInRange();
     if (target == null) return false;
 
-    gameRef.add(SlowOrb(origin: worldCenter.clone(), target: target, damage: data.damage, slowDuration: 3.0));
+    game.add(SlowOrb(origin: worldCenter.clone(), target: target, damage: data.damage, slowDuration: 3.0));
     return true;
   }
 }

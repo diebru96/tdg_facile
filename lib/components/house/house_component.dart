@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
@@ -6,7 +5,7 @@ import 'package:flutter/painting.dart';
 import '../../game/home_defense_game.dart';
 
 /// The house the player must protect.  Lives below the grid.
-class HouseComponent extends PositionComponent with HasGameRef<HomeDefenseGame> {
+class HouseComponent extends PositionComponent with HasGameReference<HomeDefenseGame> {
   static const int maxHp = 100;
   int _hp = maxHp;
 
@@ -34,7 +33,7 @@ class HouseComponent extends PositionComponent with HasGameRef<HomeDefenseGame> 
   void takeDamage(int amount) {
     _hp = (_hp - amount).clamp(0, maxHp);
     _flashTimer = _flashDuration;
-    gameRef.damageHouse(amount);
+    game.damageHouse(amount);
   }
 
   @override

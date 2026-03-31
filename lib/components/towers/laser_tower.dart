@@ -39,8 +39,8 @@ class LaserTower extends BaseTower {
     if (_laserEnd == null) return;
 
     // Draw laser beam in world space relative to grid parent
-    final startLocal = worldCenter - gameRef.grid.absolutePosition;
-    final endLocal = _laserEnd! - gameRef.grid.absolutePosition;
+    final startLocal = worldCenter - game.grid.absolutePosition;
+    final endLocal = _laserEnd! - game.grid.absolutePosition;
     final localStart = startLocal - position;
     final localEnd = endLocal - position;
 

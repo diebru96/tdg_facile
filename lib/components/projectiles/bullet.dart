@@ -1,8 +1,6 @@
 import 'dart:ui';
 
-import 'package:flame/components.dart';
 
-import '../enemies/base_enemy.dart';
 import 'base_projectile.dart';
 
 /// Standard homing bullet – deals direct damage to a single target.

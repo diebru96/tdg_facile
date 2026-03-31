@@ -11,7 +11,7 @@ class AutoTower extends BaseTower {
     final target = nearestEnemyInRange();
     if (target == null) return false;
 
-    gameRef.add(Bullet(origin: worldCenter.clone(), target: target, damage: data.damage, speed: 400, color: 0xFFFF8C00, radius: 3));
+    game.add(Bullet(origin: worldCenter.clone(), target: target, damage: data.damage, speed: 400, color: 0xFFFF8C00, radius: 3));
     return true;
   }
 }

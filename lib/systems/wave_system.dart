@@ -12,7 +12,7 @@ import '../models/enemy_type.dart';
 import '../models/level_data.dart';
 
 /// Manages wave progression: spawns enemies, waits for clear, advances.
-class WaveSystem extends Component with HasGameRef<HomeDefenseGame> {
+class WaveSystem extends Component with HasGameReference<HomeDefenseGame> {
   static const double _betweenWaveDelay = 5.0;
 
   late LevelData _level;
@@ -40,7 +40,7 @@ class WaveSystem extends Component with HasGameRef<HomeDefenseGame> {
     _spawningFinished = false;
     _waitingForNextWave = false;
     _interWaveTimer = 0;
-    gameRef.updateWaveInfo(current: 0, inProgress: false);
+    game.updateWaveInfo(current: 0, inProgress: false);
     // Start first wave after a short grace period
     _interWaveTimer = 3.0;
     _waitingForNextWave = true;
@@ -55,20 +55,19 @@ class WaveSystem extends Component with HasGameRef<HomeDefenseGame> {
   void _checkWaveComplete() {
     if (_spawningFinished && _aliveEnemies == 0) {
       final bonus = _level.waves[_waveIndex].moneyBonus;
-      gameRef.addMoney(bonus);
+      game.addMoney(bonus);
       _waveIndex++;
 
       if (_waveIndex >= _level.waves.length) {
         // All waves done!
-        gameRef.updateWaveInfo(
-            current: _level.waves.length, inProgress: false);
-        gameRef.onAllWavesComplete();
+        game.updateWaveInfo(current: _level.waves.length, inProgress: false);
+        game.onAllWavesComplete();
         return;
       }
 
       _waitingForNextWave = true;
       _interWaveTimer = _betweenWaveDelay;
-      gameRef.updateWaveInfo(current: _waveIndex, inProgress: false);
+      game.updateWaveInfo(current: _waveIndex, inProgress: false);
     }
   }
 
@@ -80,10 +79,7 @@ class WaveSystem extends Component with HasGameRef<HomeDefenseGame> {
     double delay = 0;
     for (final group in wave.groups) {
       for (int i = 0; i < group.count; i++) {
-        _queue.add(_SpawnEntry(
-          type: group.type,
-          delay: delay,
-        ));
+        _queue.add(_SpawnEntry(type: group.type, delay: delay));
         delay += group.spawnInterval;
       }
     }
@@ -93,7 +89,7 @@ class WaveSystem extends Component with HasGameRef<HomeDefenseGame> {
     _spawnTimer = 0;
     _waitingForNextWave = false;
 
-    gameRef.updateWaveInfo(current: index + 1, inProgress: true);
+    game.updateWaveInfo(current: index + 1, inProgress: true);
   }
 
   @override
@@ -101,7 +97,7 @@ class WaveSystem extends Component with HasGameRef<HomeDefenseGame> {
     super.update(dt);
 
     if (!_levelLoaded) return;
-    if (gameRef.state.index != 1) return; // playing state index = 1
+    if (game.state.index != 1) return; // playing state index = 1
 
     if (_waitingForNextWave) {
       _interWaveTimer -= dt;
@@ -132,19 +128,16 @@ class WaveSystem extends Component with HasGameRef<HomeDefenseGame> {
     final enemy = _buildEnemy(type, col);
 
     // Spawn just above the visible grid
-    final x = gameRef.grid.absolutePosition.x +
-        col * gameRef.grid.cellSize +
-        gameRef.grid.cellSize / 2 -
-        enemy.size.x / 2;
+    final x = game.grid.absolutePosition.x + col * game.grid.cellSize + game.grid.cellSize / 2 - enemy.size.x / 2;
     enemy.position = Vector2(x, -enemy.size.y - 4);
 
-    gameRef.add(enemy);
+    game.add(enemy);
   }
 
   BaseEnemy _buildEnemy(EnemyType type, int col) {
     return switch (type) {
-      EnemyType.fast    => FastThief(column: col),
-      EnemyType.tank    => TankThief(column: col),
+      EnemyType.fast => FastThief(column: col),
+      EnemyType.tank => TankThief(column: col),
       EnemyType.armored => ArmoredThief(column: col),
       EnemyType.special => SpecialThief(column: col),
     };

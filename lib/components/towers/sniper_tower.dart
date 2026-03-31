@@ -1,4 +1,5 @@
 import '../../models/tower_type.dart';
+import '../enemies/base_enemy.dart';
 import '../projectiles/bullet.dart';
 import 'base_tower.dart';
 
@@ -12,7 +13,7 @@ class SniperTower extends BaseTower {
     BaseEnemy? best;
     double bestY = double.negativeInfinity;
 
-    for (final enemy in gameRef.activeEnemies) {
+    for (final enemy in game.activeEnemies) {
       final d = (enemy.worldCenter - worldCenter).length;
       if (d < rangePixels && enemy.worldCenter.y > bestY) {
         bestY = enemy.worldCenter.y;
@@ -22,7 +23,7 @@ class SniperTower extends BaseTower {
 
     if (best == null) return false;
 
-    gameRef.add(Bullet(origin: worldCenter.clone(), target: best, damage: data.damage, speed: 600, color: 0xFFFFFF00, radius: 4));
+    game.add(Bullet(origin: worldCenter.clone(), target: best, damage: data.damage, speed: 600, color: 0xFFFFFF00, radius: 4));
     return true;
   }
 }

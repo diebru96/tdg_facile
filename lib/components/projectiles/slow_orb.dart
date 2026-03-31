@@ -1,6 +1,5 @@
 import 'dart:ui';
 
-import '../enemies/base_enemy.dart';
 import 'base_projectile.dart';
 
 /// Slow orb that chills an enemy on impact – deals minor damage and applies slow.

@@ -1,4 +1,3 @@
-import 'dart:ui';
 
 import 'package:flame/components.dart';
 import 'package:flutter/painting.dart';
@@ -10,9 +9,9 @@ import '../enemies/base_enemy.dart';
 /// Abstract base for all tower types.
 ///
 /// Towers are children of [GridComponent], so their [position] is grid-local.
-/// They find enemies through [gameRef.activeEnemies] which are direct children
+/// They find enemies through [game.activeEnemies] which are direct children
 /// of the game root.
-abstract class BaseTower extends PositionComponent with HasGameRef<HomeDefenseGame> {
+abstract class BaseTower extends PositionComponent with HasGameReference<HomeDefenseGame> {
   final TowerData data;
 
   int gridCol = 0;
@@ -40,24 +39,24 @@ abstract class BaseTower extends PositionComponent with HasGameRef<HomeDefenseGa
     _hp -= amount;
     _damageFlash = 0.15;
     if (_hp <= 0) {
-      gameRef.grid.removeTowerAt(gridCol, gridRow);
+      game.grid.removeTowerAt(gridCol, gridRow);
     }
   }
 
   // ── Range helper ─────────────────────────────────────────────────────────────
 
   /// Returns the range radius in pixels.
-  double get rangePixels => data.range * gameRef.grid.cellSize;
+  double get rangePixels => data.range * game.grid.cellSize;
 
   /// Centre of this tower in game (world) coordinates.
   Vector2 get worldCenter =>
-      gameRef.grid.absolutePosition + Vector2((gridCol + 0.5) * gameRef.grid.cellSize, (gridRow + 0.5) * gameRef.grid.cellSize);
+      game.grid.absolutePosition + Vector2((gridCol + 0.5) * game.grid.cellSize, (gridRow + 0.5) * game.grid.cellSize);
 
   /// Nearest enemy within range, or null.
   BaseEnemy? nearestEnemyInRange() {
     BaseEnemy? best;
     double bestDist = double.infinity;
-    for (final enemy in gameRef.activeEnemies) {
+    for (final enemy in game.activeEnemies) {
       final d = (enemy.worldCenter - worldCenter).length;
       if (d < rangePixels && d < bestDist) {
         bestDist = d;
@@ -69,7 +68,7 @@ abstract class BaseTower extends PositionComponent with HasGameRef<HomeDefenseGa
 
   /// All enemies within range (for area attacks).
   List<BaseEnemy> enemiesInRange() {
-    return gameRef.activeEnemies.where((e) => (e.worldCenter - worldCenter).length < rangePixels).toList();
+    return game.activeEnemies.where((e) => (e.worldCenter - worldCenter).length < rangePixels).toList();
   }
 
   // ── Update ───────────────────────────────────────────────────────────────────

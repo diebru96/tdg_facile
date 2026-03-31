@@ -11,7 +11,7 @@ class GunTower extends BaseTower {
     final target = nearestEnemyInRange();
     if (target == null) return false;
 
-    gameRef.add(Bullet(origin: worldCenter.clone(), target: target, damage: data.damage));
+    game.add(Bullet(origin: worldCenter.clone(), target: target, damage: data.damage));
     return true;
   }
 }

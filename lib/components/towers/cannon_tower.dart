@@ -11,7 +11,7 @@ class CannonTower extends BaseTower {
     final target = nearestEnemyInRange();
     if (target == null) return false;
 
-    gameRef.add(Cannonball(origin: worldCenter.clone(), targetPos: target.worldCenter.clone(), damage: data.damage, splashRadius: data.areaRadius));
+    game.add(Cannonball(origin: worldCenter.clone(), targetPos: target.worldCenter.clone(), damage: data.damage, splashRadius: data.areaRadius));
     return true;
   }
 }

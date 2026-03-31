@@ -209,6 +209,9 @@ class HomeDefenseGame extends FlameGame with TapCallbacks, ChangeNotifier {
     setState(GameState.win);
   }
 
+  /// Public method to trigger a UI refresh from overlay widgets.
+  void refresh() => notifyListeners();
+
   /// Called by WaveSystem when all waves are complete and no enemies remain.
   void onAllWavesComplete() {
     _triggerWin();

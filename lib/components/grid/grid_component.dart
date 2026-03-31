@@ -1,7 +1,6 @@
 import 'dart:ui';
 
 import 'package:flame/components.dart';
-import 'package:flutter/material.dart' show Colors;
 
 import '../../game/home_defense_game.dart';
 import '../../models/tower_type.dart';
@@ -26,7 +25,7 @@ class GridCell {
 }
 
 /// The main grid component.  Handles layout, rendering and tower management.
-class GridComponent extends PositionComponent with HasGameRef<HomeDefenseGame> {
+class GridComponent extends PositionComponent with HasGameReference<HomeDefenseGame> {
   final int cols;
   final int rows;
 
@@ -135,7 +134,7 @@ class GridComponent extends PositionComponent with HasGameRef<HomeDefenseGame> {
     final previewValidPaint = Paint()..color = const Color(0x4400FF00);
     final previewInvalidPaint = Paint()..color = const Color(0x44FF0000);
 
-    final selectedType = gameRef.selectedTowerType;
+    final selectedType = game.selectedTowerType;
 
     for (int c = 0; c < cols; c++) {
       for (int r = 0; r < rows; r++) {
